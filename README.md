@@ -1,2 +1,3 @@
 # SpringSecurityWithJWT
-This one of the test appication that implemented the Sprinmg security with JWT.
+This one of the test application that implemented the Spring security with JWT.
+
