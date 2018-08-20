@@ -10,6 +10,13 @@ public class User {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
 
+    public User() {
+    }
+
+    public User(String name) {
+        this.name = name;
+    }
+
     @Column(name="name")
     private String name;
 
