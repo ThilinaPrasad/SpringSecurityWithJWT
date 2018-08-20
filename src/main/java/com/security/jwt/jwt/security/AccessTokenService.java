@@ -1,23 +1,25 @@
 package com.security.jwt.jwt.security;
 
-import com.security.jwt.jwt.models.JwtUser;
+import com.security.jwt.jwt.models.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.util.Date;
 
 @Component
 public class AccessTokenService implements Serializable {
 
-    static final String JWT_SECRET = "secret";
-    static final String TOKEN_HEADER = "Authentication";
-    static final long TOKEN_PERIOD = 300000;
-    private Clock clock = DefaultClock.INSTANCE;
+    @Value("${app.secret}")
+    private String JWT_SECRET;
 
+    static final String TOKEN_HEADER = "Authentication";
+    static final long TOKEN_PERIOD = 30000;
+    private Clock clock = DefaultClock.INSTANCE;
 
     public String generateToken(String username, int id){
 
@@ -50,9 +52,15 @@ public class AccessTokenService implements Serializable {
     }
 
     //Validate the token
-    public String validateToken(String token){
-        Claims body = Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
-       // return (body.get("id").equals(Integer.toString(user.getId()))) && !isTokenExpire(body.getExpiration());
-        return body.getSubject();
+    public String validateUser(String token){
+        try {
+            Claims body = Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
+            return "Authorized user : "+body.getSubject();
+        }catch (ExpiredJwtException e){
+            return "This token expired";
+        }catch (SignatureException e){
+            return "Unauthorized user";
+        }
     }
+
 }

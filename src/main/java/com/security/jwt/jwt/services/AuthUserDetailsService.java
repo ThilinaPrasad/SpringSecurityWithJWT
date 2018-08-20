@@ -1,6 +1,5 @@
 package com.security.jwt.jwt.services;
 
-import com.security.jwt.jwt.models.JwtUser;
 import com.security.jwt.jwt.models.User;
 import com.security.jwt.jwt.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,11 @@ public class AuthUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        JwtUser jwtUser = (JwtUser) new User("Thilina");
-        jwtUser.setId(1);
-        return jwtUser;
+        User applicationUser = userRepo.findByName(s);
+        if (applicationUser == null) {
+            throw new UsernameNotFoundException(s);
+        }
+        return (UserDetails) new User(applicationUser.getName(), applicationUser.getPassword());
+    }
     }
 
-}
